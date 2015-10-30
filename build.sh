@@ -11,8 +11,6 @@ TAR=/usr/bin/tar
 export DST=`pwd`/out
 export IMG=`dd if=/dev/urandom bs=4K count=1 status=none | sha1sum | cut -d ' ' -f 1`.tar
 export iIMG=`dd if=/dev/urandom bs=4K count=1 status=none | sha1sum | cut -d ' ' -f 1`.tar
-export iIMG=init.tar
-export IMG=test.tar
 FILE_INST=c1install
 FILE_RUN=c1run
 LOG=build.log
@@ -76,17 +74,17 @@ ssh-keygen -E md5 -lf $ROOTFS/etc/ssh/ssh_host_ed25519_key.pub
 ssh-keygen -E sha256 -lf $ROOTFS/etc/ssh/ssh_host_ed25519_key.pub
 
 
-pushd $ROOTFS
-sudo $TAR -cpf $DST/$IMG . >> $LOG
-popd
-pushd $INITFS
-sudo $TAR -cpf $DST/$iIMG . >> $LOG
-popd
+#pushd $ROOTFS
+#sudo $TAR -cpf $DST/$IMG . >> $LOG
+#popd
+#pushd $INITFS
+#sudo $TAR -cpf $DST/$iIMG . >> $LOG
+#popd
 
-envsubst < $FILE_RUN > $DST/$FILE_RUN
-chmod +x $DST/$FILE_RUN
-envsubst < $FILE_INST > $DST/$FILE_INST
-chmod +x $DST/$FILE_INST
+#envsubst < $FILE_RUN > $DST/$FILE_RUN
+#chmod +x $DST/$FILE_RUN
+#envsubst < $FILE_INST > $DST/$FILE_INST
+#chmod +x $DST/$FILE_INST
 
 sudo rm -rf $ROOTFS
 sudo rm -rf $INITFS
@@ -94,12 +92,9 @@ echo Finished!
 
 cat << __EOF__
 To buil the target server:
-  * upload $iIMG, $IMG, $FILE_INST and $FILE_RUN to $DESTINATION_URL
+  * upload $iIMG and $IMG, to $DESTINATION_URL
   * create a new C1 instance and add 'INIRD_POST_SHELL=1' tag to it
-  * boot, connect to the console, then:
-    * wget -O - $DESTINATION_URL/$FILE_INST | sh to install the new instance
-    or
-    * wget -O - $DESTINATION_URL/$FILE_RUN | sh to unlock and run an installed instance
+  * boot, connect to the console, then follow the README !
 __EOF__
 
 
