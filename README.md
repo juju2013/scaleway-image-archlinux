@@ -79,7 +79,7 @@ As the file system is encrypted and no descryption key is stored locally, at eac
 
 Notes
 -----
-There's many reasons that one would encrypt the whole system, but it's not (and by far) bullet proof. For instance, you don't have the control of the kernel nor the initrd, which make it very easy to backdoor the whole system by - let's say, any 3 letters agencies, Gvt's or employees of scaleway if they want.
+There's many reasons that one would encrypt the whole system, but it's not (and by far) bullet proof. For instance, you don't have the control of the kernel nor the initrd, which make it very easy to backdoor the whole system by - let's say, any 3 letters agencies, [Gvt's or employees of scaleway](https://fr.wikipedia.org/wiki/Loi_relative_au_renseignement) if they want.
 
 ---
 
