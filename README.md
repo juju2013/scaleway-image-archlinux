@@ -45,7 +45,7 @@ Install your images
   * Fire it up
   * Connect to console and wait for initrd's shell, then
 
-
+```
     wget -O - URL/your-init.tar | tar xpf -
     ./oc-sync-kernel-modules
     echo format c: here
@@ -58,7 +58,7 @@ Install your images
     cd /newroot
     wget -O - URL/your-target.tar | tar xpf -
     sync; sync; sync; exit
-
+```
 
 Tada! You get a new dm-encrypted, btrfs based arch linux sytem with your own ssh key now !
 
