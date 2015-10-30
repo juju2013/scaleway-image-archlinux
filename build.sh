@@ -1,6 +1,7 @@
 # !/usr/bin/env bash
 # Build a custom archlinux arm image
 # This image is supposed to run on a [C1](http://scaleway.com/) server
+# Copyright (c) 2015 juju2013@github
 
 if [ -z "$DESTINATION_URL" ]; then
 	echo Please define DESTINATION_URL first
