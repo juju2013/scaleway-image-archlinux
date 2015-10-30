@@ -48,15 +48,13 @@ Install your images
 
     wget -O - URL/your-init.tar | tar xpf -
     ./oc-sync-kernel-modules
-
-    #--- format c: here
+    echo format c: here
     dd if=/dev/zero of=/dev/nbd0 bs=1M count=1024
     cryptsetup luksFormat /dev/nbd0
     cryptsetup open /dev/nbd0 cryptroot
     mkfs.btrfs /dev/nbd0
     mount /dev/mapper/cryptroot /newroot
-    
-    #--- install the target system here
+    echo install the target system here
     cd /newroot
     wget -O - URL/your-target.tar | tar xpf -
     sync; sync; sync; exit
