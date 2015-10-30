@@ -21,7 +21,8 @@ chmod 755 $ROOTFS
 
 echo "Getting latest archlinuxarm image..."
 echo > $LOG
-#wget http://archlinuxarm.org/os/ArchLinuxARM-armv7-latest.tar.gz >> $LOG
+ALARM=ArchLinuxARM-armv7-latest.tar.gz
+wget -O $ALARM http://archlinuxarm.org/os/$ALARM >> $LOG
 
 echo "Extracting ..."
 sudo $TAR -xzpf ArchLinuxARM-armv7-latest.tar.gz -C $ROOTFS --warning=none 2>&1 >> $LOG
@@ -32,13 +33,13 @@ sudo mkdir -p $ROOTFS/root/.ssh/
 sudo touch $ROOTFS/root/.ssh/authorized_keys
 sudo cp -vr patches/etc/* $ROOTFS/etc/ >> $LOG
 sudo cp -vr patches/usr/* $ROOTFS/usr/ >> $LOG
-sudo cp install.sh  $INITFS/install.sh
-sudo chown root:root $INITFS/install.sh
-sudo chmod 0755 $INITFS/install.sh
+#sudo cp install.sh  $INITFS/install.sh
+#sudo chown root:root $INITFS/install.sh
+#sudo chmod 0755 $INITFS/install.sh
 sudo cp chroot.sh $ROOTFS/root/
 sudo chmod 0755 $ROOTFS/root/chroot.sh
-sudo cp xnbd-client $ROOTFS/usr/local/bin/
-sudo chmod 0755 $ROOTFS/usr/local/bin/xnbd-client
+#sudo cp xnbd-client $ROOTFS/usr/local/bin/
+#sudo chmod 0755 $ROOTFS/usr/local/bin/xnbd-client
 sudo sed -i '/CheckSpace/c\#CheckSpace' $ROOTFS/etc/pacman.conf
 sudo cp oc-sync-kernel-modules $INITFS/
 sudo cp oc-sync-kernel-modules $ROOTFS/usr/local/bin/

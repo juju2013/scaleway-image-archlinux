@@ -1,9 +1,0 @@
-#! /bin/sh
-
-echo $iIMG
-cd /
-wget -O - ${DESTINATION_URL}/${iIMG} | tar xpf -
-/oc-sync-kernel-modules
-depmod -a
-/usr/bin/bash /install.sh
-

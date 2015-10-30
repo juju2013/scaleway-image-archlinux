@@ -1,41 +1,88 @@
 Archlinux image on Scaleway [![Build Status](https://travis-ci.org/scaleway/image-archlinux.svg?branch=master)](https://travis-ci.org/scaleway/image-archlinux)
 ===========================
 
-**Warning: this image is not yet working**
+Scripts to build my personal ArchlinuxARM image on Scaleway with dm-encrypted root file system
 
-Scripts to build the official Archlinux image on Scaleway
+This image DOES NOT use the officiel [Image Tools](https://github.com/scaleway/image-tools). Instead it's based on the official [ArchLinuxArm](http://archlinuxarm.org/) image.
 
-This image is built using [Image Tools](https://github.com/scaleway/image-tools) and is based on the official [Ubuntu](https://github.com/scaleway/image-ubuntu) image.
-
-<img src="http://upload.wikimedia.org/wikipedia/commons/5/59/Archlogo.png" width="300px" />
+<img src="http://archlinuxarm.org/sites/default/files/wikilogo_0_0.png" />
 
 ---
 
 **This image is meant to be used on a C1 server.**
 
-We use the Docker's building system and convert it at the end to a disk image that will boot on real servers without Docker. Note that the image is still runnable as a Docker container for debug or for inheritance.
+This tool will build 2 images:
 
-[More info](https://github.com/scaleway/image-tools#docker-based-builder)
+  * root file system.tar is the official archlinuxarm's one, with 2 addtions:
+    * you have to put one or more ssh public keys in keys/ folder. It will grant you root access to the destination image
+    * it'll generate ssh host keys so you don't have to blindly trust at first ssh connect
+
+  * init file system.tar is the manual installer, it'll have all the necessary to let you format/install the previous image on a dm-encrypted file system
 
 ---
 
-Install
+Build your images
+----------
+
+You will nedd the following:
+
+* A working archlinuxarm host, like a scalway's C1 instance, let's call it ``SOURCE``
+* A C1 instance, where you want to install the ``TARGET`` system
+* A http server, reachable by the ``TARGET`` and can host the images at ``URL``
+
+To build:
+
+    git clone https://github.com/juju2013/scaleway-image-archlinux
+    cd scaleway-image-archlinux
+    DESTINATION_URL=URL ./build.sh
+    scp *.tar YOUR_HTTP_SERVER:/URL
+
+Install your images
+-----------
+
+  * Create your ``TARGET`` instance
+  * Add ``INITRD_POST_SHELL=1`` to TAGS
+  * Fire it up
+  * Connect to console and wait for initrd's shell, then
+
+
+    wget -O - URL/your-init.tar | tar xpf -
+    ./oc-sync-kernel-modules
+
+    #--- format c: here
+    dd if=/dev/zero of=/dev/nbd0 bs=1M count=1024
+    cryptsetup luksFormat /dev/nbd0
+    cryptsetup open /dev/nbd0 cryptroot
+    mkfs.btrfs /dev/nbd0
+    mount /dev/mapper/cryptroot /newroot
+    
+    #--- install the target system here
+    cd /newroot
+    wget -O - URL/your-target.tar | tar xpf -
+    sync; sync; sync; exit
+
+
+Tada! You get a new dm-encrypted, btrfs based arch linux sytem with your own ssh key now !
+
+Boot and reboot
 -------
+As the file system is encrypted and no descryption key is stored locally, at each boot, you'll need to coneect to the console and run this to finish the boot:
 
-Build and write the image to /dev/nbd1 (see [documentation](https://www.scaleway.com/docs/create_an_image_with_docker))
 
-    $ make install
+    wget -O - UR/your-init.tar | tar xpf -
+    ./oc-sync-kernel-modules
+    cryptsetup open /dev/nbd0 cryptroot
+    mount /dev/mapper/cryptroot /newroot
+    exit
 
-Full list of commands available at: [scaleway/image-tools](https://github.com/scaleway/image-tools/#commands)
+
 
 ---
 
-links
+Notes
 -----
-
-- [Community: Add Archlinux ARM image](https://community.cloud.online.net/t/need-feedback-add-arch-linux-arm-image/243?u=manfred)
-- [Community: New linux distributions (Debian, CoreOS, CentOS, Fedora, Arch Linux, ...)](https://community.cloud.online.net/t/official-new-linux-distributions-debian-coreos-centos-fedora-arch-linux/229?u=manfred)
+There's many reasons that one would encrypt the whole system, but it's not (and by far) bullet proof. For instance, you don't have the control of the kernel nor the initrd, which make it very easy to backdoor the whole system by - let's say, any 3 letters agencies, Gvt's or employees of scaleway if they want.
 
 ---
 
-A project by [![Scaleway](https://avatars1.githubusercontent.com/u/5185491?v=3&s=42)](https://www.scaleway.com/)
+Have fun!
